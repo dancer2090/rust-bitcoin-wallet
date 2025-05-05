@@ -3,19 +3,18 @@ use std::str::FromStr;
 use bitcoin::secp256k1::{Secp256k1, SecretKey, PublicKey};
 use bitcoin::{Address, CompressedPublicKey, Network, PrivateKey};
 use bip39::{Language, Mnemonic};
-use rand::RngCore;
-
+use rand_core::{TryRngCore, OsRng};
  #[derive(Debug)]
 pub struct Wallet {
     pub private_key: String,
-    public_key: String,
-    address: String,
+    pub public_key: String,
+    pub address: String,
 }
 
 pub fn generate_seed_phrase() -> String {
   // create a new randomly generated mnemonic phrase
   let mut entropy: [u8; 32] = [0; 32];
-  rand::rng().fill_bytes(&mut entropy);
+  OsRng.try_fill_bytes(&mut entropy).unwrap();
   let phrase = Mnemonic::from_entropy_in(Language::English, &entropy).unwrap();
   format!("{}", phrase)
 }
